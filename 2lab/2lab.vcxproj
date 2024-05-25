@@ -121,11 +121,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="2lab.cpp" />
+    <ClCompile Include="arrays.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2lab.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="arrays.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="2lab.resx">

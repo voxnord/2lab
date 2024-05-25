@@ -1,4 +1,5 @@
 #pragma once
+#include "arrays.h"
 
 namespace u2lab {
 
