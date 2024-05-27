@@ -9,7 +9,7 @@ namespace u2lab {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
+		
 	/// <summary>
 	/// Сводка для u	2lab
 	/// </summary>
@@ -279,6 +279,8 @@ namespace u2lab {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(9, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->AutoSize = true;
+			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(629, 458);
 			this->Controls->Add(this->result_groupBox);
 			this->Controls->Add(this->err_btn);
@@ -288,6 +290,7 @@ namespace u2lab {
 			this->Controls->Add(this->data_groupBox);
 			this->Controls->Add(this->array_groupBox);
 			this->Controls->Add(this->start_btn);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Name = L"u2lab";
 			this->RightToLeft = System::Windows::Forms::RightToLeft::No;
 			this->ShowIcon = false;
@@ -300,6 +303,46 @@ namespace u2lab {
 
 		}
 #pragma endregion
+
+	ref class procedure 
+	{
+	private:
+		u2lab^ thise;
+	public:
+		procedure(u2lab^ form) {
+			this->thise = form;
+		}
+		void btn_locker()
+		{
+			thise->reset_btn->Enabled = false;
+			thise->start_btn->Enabled = false;
+			thise->arr1->Enabled = false;
+			thise->arr2->Enabled = false;
+			thise->arr3->Enabled = false;
+			thise->RadixSort->Enabled = false;
+			thise->InsertionSort->Enabled = false;
+			thise->BubbleSort->Enabled = false;
+			thise->CocktailSort->Enabled = false;
+			thise->QuickSort->Enabled = false;
+			thise->err_btn->Enabled = false;
+
+
+		}
+		void btn_unlocker()
+		{
+			thise->reset_btn->Enabled = true;
+			thise->start_btn->Enabled = true;
+			thise->arr1->Enabled = true;
+			thise->arr2->Enabled = true;
+			thise->arr3->Enabled = true;
+			thise->RadixSort->Enabled = true;
+			thise->InsertionSort->Enabled = true;
+			thise->BubbleSort->Enabled = true;
+			thise->CocktailSort->Enabled = true;
+			thise->QuickSort->Enabled = true;
+			thise->err_btn->Enabled = true;
+		}
+	};
 	private: System::Void info_btn_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		String^ info_btn =
