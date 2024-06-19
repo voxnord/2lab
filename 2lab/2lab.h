@@ -346,9 +346,9 @@ namespace u2lab {
 	private: System::Void info_btn_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		String^ info_btn =
-			"\n"
-			"\n"
-			"\n";
+			"F\n"
+			"F\n"
+			"F\n";
 		MessageBox::Show(info_btn, "Информация о программе", MessageBoxButtons::OK, MessageBoxIcon::Information);
 	}
 	private: System::Void start_btn_Click(System::Object^ sender, System::EventArgs^ e)
