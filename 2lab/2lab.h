@@ -9,19 +9,25 @@ namespace u2lab {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-		
+
 	/// <summary>
 	/// Сводка для u	2lab
 	/// </summary>
 	public ref class u2lab : public System::Windows::Forms::Form
 	{
+
+	private: System::DateTime startTime;
+	private: System::DateTime endTime;
+	private: System::Windows::Forms::Timer^ timer;
+
 	public:
 		u2lab(void)
 		{
 			InitializeComponent();
-			//
-			//TODO: добавьте код конструктора
-			//
+
+			timer = gcnew System::Windows::Forms::Timer();
+			timer->Interval = 1000;
+			timer->Tick += gcnew System::EventHandler(this, &u2lab::UpdateTimer);
 		}
 
 	protected:
@@ -35,9 +41,12 @@ namespace u2lab {
 				delete components;
 			}
 		}
+
+	private: array<long>^ arr;
+
 	private: System::Windows::Forms::Button^ start_btn;
 	private: System::Windows::Forms::GroupBox^ array_groupBox;
-
+	private: System::Windows::Forms::Label^ TimerL;
 	private: System::Windows::Forms::GroupBox^ sorting_groupBox;
 	private: System::Windows::Forms::GroupBox^ data_groupBox;
 	protected:
@@ -72,6 +81,13 @@ namespace u2lab {
 
 	private: System::Windows::Forms::RadioButton^ arr1;
 	private: System::Windows::Forms::RadioButton^ arr3;
+	private: System::Windows::Forms::Label^ inlabel;
+
+	private: System::Windows::Forms::Panel^ panel1;
+	private: System::Windows::Forms::Panel^ panel2;
+	private: System::Windows::Forms::Label^ outlabel;
+
+
 
 
 
@@ -81,7 +97,7 @@ namespace u2lab {
 		/// <summary>
 		/// Обязательная переменная конструктора.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+		System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -102,19 +118,28 @@ namespace u2lab {
 			this->InsertionSort = (gcnew System::Windows::Forms::RadioButton());
 			this->BubbleSort = (gcnew System::Windows::Forms::RadioButton());
 			this->data_groupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->panel1 = (gcnew System::Windows::Forms::Panel());
+			this->inlabel = (gcnew System::Windows::Forms::Label());
 			this->reset_btn = (gcnew System::Windows::Forms::Button());
 			this->info_btn = (gcnew System::Windows::Forms::Button());
 			this->err_btn = (gcnew System::Windows::Forms::Button());
 			this->result_groupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->panel2 = (gcnew System::Windows::Forms::Panel());
+			this->outlabel = (gcnew System::Windows::Forms::Label());
+			this->TimerL = (gcnew System::Windows::Forms::Label());
 			this->array_groupBox->SuspendLayout();
 			this->sorting_groupBox->SuspendLayout();
+			this->data_groupBox->SuspendLayout();
+			this->panel1->SuspendLayout();
+			this->result_groupBox->SuspendLayout();
+			this->panel2->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// start_btn
 			// 
 			this->start_btn->Location = System::Drawing::Point(95, 319);
 			this->start_btn->Name = L"start_btn";
-			this->start_btn->Size = System::Drawing::Size(108, 36);
+			this->start_btn->Size = System::Drawing::Size(108, 60);
 			this->start_btn->TabIndex = 0;
 			this->start_btn->Text = L"Старт";
 			this->start_btn->UseVisualStyleBackColor = true;
@@ -142,6 +167,7 @@ namespace u2lab {
 			this->arr3->TabStop = true;
 			this->arr3->Text = L"Массив 3";
 			this->arr3->UseVisualStyleBackColor = true;
+			this->arr3->CheckedChanged += gcnew System::EventHandler(this, &u2lab::arr3_CheckedChanged);
 			// 
 			// arr2
 			// 
@@ -153,6 +179,7 @@ namespace u2lab {
 			this->arr2->TabStop = true;
 			this->arr2->Text = L"Массив 2";
 			this->arr2->UseVisualStyleBackColor = true;
+			this->arr2->CheckedChanged += gcnew System::EventHandler(this, &u2lab::arr2_CheckedChanged);
 			// 
 			// arr1
 			// 
@@ -164,6 +191,7 @@ namespace u2lab {
 			this->arr1->TabStop = true;
 			this->arr1->Text = L"Массив 1";
 			this->arr1->UseVisualStyleBackColor = true;
+			this->arr1->CheckedChanged += gcnew System::EventHandler(this, &u2lab::arr1_CheckedChanged);
 			// 
 			// sorting_groupBox
 			// 
@@ -231,27 +259,48 @@ namespace u2lab {
 			// 
 			// data_groupBox
 			// 
+			this->data_groupBox->Controls->Add(this->panel1);
 			this->data_groupBox->Location = System::Drawing::Point(209, 12);
 			this->data_groupBox->Name = L"data_groupBox";
-			this->data_groupBox->Size = System::Drawing::Size(200, 429);
+			this->data_groupBox->Size = System::Drawing::Size(424, 210);
 			this->data_groupBox->TabIndex = 0;
 			this->data_groupBox->TabStop = false;
 			this->data_groupBox->Text = L"Данные";
+			// 
+			// panel1
+			// 
+			this->panel1->AutoScroll = true;
+			this->panel1->Controls->Add(this->inlabel);
+			this->panel1->Location = System::Drawing::Point(6, 25);
+			this->panel1->Name = L"panel1";
+			this->panel1->Size = System::Drawing::Size(412, 179);
+			this->panel1->TabIndex = 0;
+			// 
+			// inlabel
+			// 
+			this->inlabel->AutoSize = true;
+			this->inlabel->ForeColor = System::Drawing::SystemColors::ControlDarkDark;
+			this->inlabel->Location = System::Drawing::Point(3, 4);
+			this->inlabel->Name = L"inlabel";
+			this->inlabel->Size = System::Drawing::Size(224, 20);
+			this->inlabel->TabIndex = 0;
+			this->inlabel->Text = L"Неотсортированный массив";
 			// 
 			// reset_btn
 			// 
 			this->reset_btn->Location = System::Drawing::Point(12, 319);
 			this->reset_btn->Name = L"reset_btn";
-			this->reset_btn->Size = System::Drawing::Size(77, 36);
+			this->reset_btn->Size = System::Drawing::Size(77, 60);
 			this->reset_btn->TabIndex = 3;
 			this->reset_btn->Text = L"Сброс";
 			this->reset_btn->UseVisualStyleBackColor = true;
+			this->reset_btn->Click += gcnew System::EventHandler(this, &u2lab::reset_btn_Click);
 			// 
 			// info_btn
 			// 
-			this->info_btn->Location = System::Drawing::Point(12, 361);
+			this->info_btn->Location = System::Drawing::Point(12, 385);
 			this->info_btn->Name = L"info_btn";
-			this->info_btn->Size = System::Drawing::Size(191, 34);
+			this->info_btn->Size = System::Drawing::Size(191, 38);
 			this->info_btn->TabIndex = 4;
 			this->info_btn->Text = L"Информация";
 			this->info_btn->UseVisualStyleBackColor = true;
@@ -259,29 +308,57 @@ namespace u2lab {
 			// 
 			// err_btn
 			// 
-			this->err_btn->Location = System::Drawing::Point(12, 401);
+			this->err_btn->Location = System::Drawing::Point(12, 429);
 			this->err_btn->Name = L"err_btn";
-			this->err_btn->Size = System::Drawing::Size(191, 40);
+			this->err_btn->Size = System::Drawing::Size(191, 35);
 			this->err_btn->TabIndex = 5;
 			this->err_btn->Text = L"Проверка на ошибки";
 			this->err_btn->UseVisualStyleBackColor = true;
 			// 
 			// result_groupBox
 			// 
-			this->result_groupBox->Location = System::Drawing::Point(415, 12);
+			this->result_groupBox->Controls->Add(this->panel2);
+			this->result_groupBox->Location = System::Drawing::Point(211, 231);
 			this->result_groupBox->Name = L"result_groupBox";
-			this->result_groupBox->Size = System::Drawing::Size(200, 429);
+			this->result_groupBox->Size = System::Drawing::Size(422, 210);
 			this->result_groupBox->TabIndex = 0;
 			this->result_groupBox->TabStop = false;
 			this->result_groupBox->Text = L"Результат";
+			// 
+			// panel2
+			// 
+			this->panel2->AutoScroll = true;
+			this->panel2->Controls->Add(this->outlabel);
+			this->panel2->Location = System::Drawing::Point(6, 25);
+			this->panel2->Name = L"panel2";
+			this->panel2->Size = System::Drawing::Size(412, 179);
+			this->panel2->TabIndex = 1;
+			// 
+			// outlabel
+			// 
+			this->outlabel->AutoSize = true;
+			this->outlabel->ForeColor = System::Drawing::SystemColors::ControlDarkDark;
+			this->outlabel->Location = System::Drawing::Point(3, 4);
+			this->outlabel->Name = L"outlabel";
+			this->outlabel->Size = System::Drawing::Size(206, 20);
+			this->outlabel->TabIndex = 0;
+			this->outlabel->Text = L"Отсортированный массив";
+			// 
+			// TimerL
+			// 
+			this->TimerL->AutoSize = true;
+			this->TimerL->Location = System::Drawing::Point(213, 444);
+			this->TimerL->Name = L"TimerL";
+			this->TimerL->Size = System::Drawing::Size(154, 20);
+			this->TimerL->TabIndex = 6;
+			this->TimerL->Text = L"Время сортировки:";
 			// 
 			// u2lab
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(9, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->AutoSize = true;
-			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
-			this->ClientSize = System::Drawing::Size(629, 458);
+			this->ClientSize = System::Drawing::Size(649, 471);
+			this->Controls->Add(this->TimerL);
 			this->Controls->Add(this->result_groupBox);
 			this->Controls->Add(this->err_btn);
 			this->Controls->Add(this->info_btn);
@@ -291,6 +368,7 @@ namespace u2lab {
 			this->Controls->Add(this->array_groupBox);
 			this->Controls->Add(this->start_btn);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->MaximizeBox = false;
 			this->Name = L"u2lab";
 			this->RightToLeft = System::Windows::Forms::RightToLeft::No;
 			this->ShowIcon = false;
@@ -299,61 +377,286 @@ namespace u2lab {
 			this->array_groupBox->PerformLayout();
 			this->sorting_groupBox->ResumeLayout(false);
 			this->sorting_groupBox->PerformLayout();
+			this->data_groupBox->ResumeLayout(false);
+			this->panel1->ResumeLayout(false);
+			this->panel1->PerformLayout();
+			this->result_groupBox->ResumeLayout(false);
+			this->panel2->ResumeLayout(false);
+			this->panel2->PerformLayout();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
 
-	ref class procedure 
+	private: void UpdateTimer(Object^ sender, EventArgs^ e)
 	{
-	private:
-		u2lab^ thise;
-	public:
-		procedure(u2lab^ form) {
-			this->thise = form;
-		}
-		void btn_locker()
-		{
-			thise->reset_btn->Enabled = false;
-			thise->start_btn->Enabled = false;
-			thise->arr1->Enabled = false;
-			thise->arr2->Enabled = false;
-			thise->arr3->Enabled = false;
-			thise->RadixSort->Enabled = false;
-			thise->InsertionSort->Enabled = false;
-			thise->BubbleSort->Enabled = false;
-			thise->CocktailSort->Enabled = false;
-			thise->QuickSort->Enabled = false;
-			thise->err_btn->Enabled = false;
+		TimeSpan elapsedTime = endTime - startTime;
+		TimerL->Text = "Время сортировки: " + elapsedTime.ToString("mm\\:ss\\.ff");
+	}
 
+		   void ButtonWork(bool on)
+		   {
+			   this->reset_btn->Enabled = on;
+			   this->start_btn->Enabled = on;
+			   this->arr1->Enabled = on;
+			   this->arr2->Enabled = on;
+			   this->arr3->Enabled = on;
+			   this->RadixSort->Enabled = on;
+			   this->InsertionSort->Enabled = on;
+			   this->BubbleSort->Enabled = on;
+			   this->CocktailSort->Enabled = on;
+			   this->QuickSort->Enabled = on;
+			   this->err_btn->Enabled = on;
+		   }
 
+	private: void DisplayArray(const std::vector<long> arrayn)
+	{
+		ButtonWork(false);
+		this->inlabel->Text = "";
+		this->outlabel->Text = "";
+
+		arr = gcnew array<long>(arrayn.size());
+		System::Text::StringBuilder^ StringBuilder = gcnew System::Text::StringBuilder();
+
+		for (int i = 0; i < arrayn.size(); i++) {
+			arr[i] = arrayn[i];
+			StringBuilder->Append(arrayn[i].ToString() + " ");
+			if ((i + 1) % 6 == 0)
+			{
+				StringBuilder->Append("\n");
+			}
 		}
-		void btn_unlocker()
+
+		this->inlabel->Text = StringBuilder->ToString();
+		ButtonWork(true);
+	}
+
+		   // Функция сортировки с выводом результата
+	private:void DisplaySorted(array<long>^ arr, Action<array<long>^>^ sort)
+	{
+		startTime = System::DateTime::Now;
+		ButtonWork(false);
+
+		sort(arr);
+		this->outlabel->Text = "";
+
+		for (int i = 0; i < arr->Length; ++i)
 		{
-			thise->reset_btn->Enabled = true;
-			thise->start_btn->Enabled = true;
-			thise->arr1->Enabled = true;
-			thise->arr2->Enabled = true;
-			thise->arr3->Enabled = true;
-			thise->RadixSort->Enabled = true;
-			thise->InsertionSort->Enabled = true;
-			thise->BubbleSort->Enabled = true;
-			thise->CocktailSort->Enabled = true;
-			thise->QuickSort->Enabled = true;
-			thise->err_btn->Enabled = true;
+			this->outlabel->Text += arr[i].ToString() + " ";
+			if ((i + 1) % 6 == 0)
+			{
+				this->outlabel->Text += "\n";
+			}
 		}
-	};
+
+		ButtonWork(true);
+		endTime = System::DateTime::Now;
+		TimeSpan elapsedTime = endTime - startTime;
+		TimerL->Text = "Время сортировки: " + elapsedTime.ToString("mm\\:ss\\.ff");
+	}
+
 	private: System::Void info_btn_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		String^ info_btn =
-			"F\n"
-			"F\n"
-			"F\n";
+			"\n"
+			"\n"
+			"\n";
 		MessageBox::Show(info_btn, "Информация о программе", MessageBoxButtons::OK, MessageBoxIcon::Information);
 	}
+		   // Массивы //
+
+		   // Варианты //
+
+	private: System::Void arr1_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+	{
+		DisplayArray(array1);
+	}
+
+	private: System::Void arr2_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+	{
+		DisplayArray(array2);
+	}
+
+	private: System::Void arr3_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+	{
+		DisplayArray(array3);
+	}
+
+		   // Сортировки //
+
+		   void ProcRadixSort(array<long>^ arr) // Поразрядная
+		   {
+			   int n = arr->Length;
+			   array<long>^ output = gcnew array<long>(n);
+			   long max = arr[0];
+			   for (int i = 1; i < n; i++)
+			   {
+				   if (arr[i] > max)
+					   max = arr[i];
+			   }
+			   for (long exp = 1; max / exp > 0; exp *= 10)
+			   {
+				   array<int>^ count = gcnew array<int>(10);
+				   for (int i = 0; i < 10; i++)
+					   count[i] = 0;
+				   for (int i = 0; i < n; i++)
+					   count[(arr[i] / exp) % 10]++;
+				   for (int i = 1; i < 10; i++)
+					   count[i] += count[i - 1];
+				   for (int i = n - 1; i >= 0; i--)
+				   {
+					   output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+					   count[(arr[i] / exp) % 10]--;
+				   }
+				   for (int i = 0; i < n; i++)
+					   arr[i] = output[i];
+			   }
+		   }
+
+		   void ProcInsertionSort(array<long>^ arr) // Вставками
+		   {
+			   int n = arr->Length;
+			   for (int i = 1; i < n; i++)
+			   {
+				   long key = arr[i];
+				   int j = i - 1;
+				   while (j >= 0 && arr[j] > key)
+				   {
+					   arr[j + 1] = arr[j];
+					   j--;
+				   }
+				   arr[j + 1] = key;
+			   }
+		   }
+
+
+		   void ProcBubbleSort(array<long>^ arr) // Пузырьковая
+		   {
+			   int n = arr->Length;
+			   for (int i = 0; i < n - 1; i++)
+			   {
+				   for (int j = 0; j < n - i - 1; j++)
+				   {
+					   if (arr[j] > arr[j + 1])
+					   {
+						   long temp = arr[j];
+						   arr[j] = arr[j + 1];
+						   arr[j + 1] = temp;
+					   }
+				   }
+			   }
+		   }
+
+		   // Шейкер
+		   void ProcCocktailSort(array<long>^ arr)
+		   {
+			   int n = arr->Length;
+			   int left = 0, right = n - 1;
+			   while (left <= right)
+			   {
+				   for (int i = left; i < right; i++)
+				   {
+					   if (arr[i] > arr[i + 1])
+					   {
+						   long temp = arr[i];
+						   arr[i] = arr[i + 1];
+						   arr[i + 1] = temp;
+					   }
+				   }
+				   right--;
+				   for (int i = right; i > left; i--)
+				   {
+					   if (arr[i] < arr[i - 1])
+					   {
+						   long temp = arr[i];
+						   arr[i] = arr[i - 1];
+						   arr[i - 1] = temp;
+					   }
+				   }
+				   left++;
+			   }
+		   }
+
+		   // Алгоритм сравнивания разрядов
+		   int partition(array<long>^ arr, int low, int high)
+		   {
+			   long pivot = arr[high];
+			   int i = low - 1;
+			   for (int j = low; j <= high - 1; j++)
+			   {
+				   if (arr[j] < pivot)
+				   {
+					   i++;
+					   long temp = arr[i];
+					   arr[i] = arr[j];
+					   arr[j] = temp;
+				   }
+			   }
+			   long temp = arr[i + 1];
+			   arr[i + 1] = arr[high];
+			   arr[high] = temp;
+			   return i + 1;
+		   }
+
+		   // Быстрая
+		   void ProcQuickSort(array<long>^ arr, int low, int high)
+		   {
+			   if (low < high)
+			   {
+				   int pi = partition(arr, low, high);
+				   ProcQuickSort(arr, low, pi - 1);
+				   ProcQuickSort(arr, pi + 1, high);
+			   }
+		   }
+
+		   void ProcQuickSort(array<long>^ arr)
+		   {
+			   ProcQuickSort(arr, 0, arr->Length - 1);
+		   }
+
 	private: System::Void start_btn_Click(System::Object^ sender, System::EventArgs^ e)
 	{
-
+		if (RadixSort->Checked)
+		{
+			DisplaySorted(arr, gcnew Action<array<long>^>(this, &u2lab::ProcRadixSort));
+		}
+		else if (InsertionSort->Checked)
+		{
+			DisplaySorted(arr, gcnew Action<array<long>^>(this, &u2lab::ProcInsertionSort));
+		}
+		else if (BubbleSort->Checked)
+		{
+			DisplaySorted(arr, gcnew Action<array<long>^>(this, &u2lab::ProcBubbleSort));
+		}
+		else if (CocktailSort->Checked)
+		{
+			DisplaySorted(arr, gcnew Action<array<long>^>(this, &u2lab::ProcCocktailSort));
+		}
+		else if (QuickSort->Checked)
+		{
+			DisplaySorted(arr, gcnew Action<array<long>^>(this, &u2lab::ProcQuickSort));
+		}
+		else
+		{
+			MessageBox::Show("Не выбран вариант сортировки!", "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
 	}
-};
+
+	private: System::Void reset_btn_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		this->arr1->Checked = false;
+		this->arr2->Checked = false;
+		this->arr3->Checked = false;
+		this->RadixSort->Checked = false;
+		this->InsertionSort->Checked = false;
+		this->BubbleSort->Checked = false;
+		this->CocktailSort->Checked = false;
+		this->QuickSort->Checked = false;
+		this->inlabel->Text = "Неотсортированный массив";
+		this->outlabel->Text = "Отсортированный массив";
+		this->TimerL->Text = "Время сортировки:";
+		timer->Stop();
+	}
+	};
 }
